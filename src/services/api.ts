@@ -5,28 +5,10 @@ const API_BASE = '/api';
 export const apiService = {
   // 1. Submit assessment data to Laravel MySQL Backend
   async saveSubmission(submissionData: Partial<AssessmentSubmission>): Promise<string> {
-    try {
-      const response = await fetch(`${API_BASE}/submissions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(submissionData)
-      });
-      if (response.ok) {
-        const result = await response.json();
-        return result.submissionId || result.id;
-      }
-    } catch (e) {
-      console.warn('API unavailable, storing in localStorage fallback:', e);
-    }
-
-    // Local Storage Fallback
-    const id = 'SUB-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+    const fallbackId = submissionData.id || 'SUB-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
     const newSubmission: AssessmentSubmission = {
-      id,
-      timestamp: new Date().toISOString(),
+      id: fallbackId,
+      timestamp: submissionData.timestamp || new Date().toISOString(),
       companyName: submissionData.companyName || '',
       industry: submissionData.industry || '',
       companySize: submissionData.companySize || '',
@@ -49,11 +31,59 @@ export const apiService = {
       readinessDescription: submissionData.readinessDescription || '',
     };
 
-    const existingStr = localStorage.getItem('nortis_assessment_submissions');
-    const existing: AssessmentSubmission[] = existingStr ? JSON.parse(existingStr) : [];
-    existing.unshift(newSubmission);
-    localStorage.setItem('nortis_assessment_submissions', JSON.stringify(existing));
-    return id;
+    // Save to localStorage as immediate cache
+    try {
+      const existingStr = localStorage.getItem('nortis_assessment_submissions') || localStorage.getItem('nortis_submissions');
+      const existing: AssessmentSubmission[] = existingStr ? JSON.parse(existingStr) : [];
+      const updated = [newSubmission, ...existing.filter(s => s.id !== newSubmission.id)];
+      localStorage.setItem('nortis_assessment_submissions', JSON.stringify(updated));
+      localStorage.setItem('nortis_submissions', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('LocalStorage save error:', err);
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/submissions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
+      });
+      if (response.ok) {
+        const result = await response.json();
+        return result.submissionId || result.id || fallbackId;
+      }
+    } catch (e) {
+      console.warn('API unavailable, using local ID:', e);
+    }
+
+    return fallbackId;
+  },
+
+  // Get single submission by ID
+  async getSubmissionById(id: string): Promise<AssessmentSubmission | null> {
+    try {
+      const response = await fetch(`${API_BASE}/submissions/${id}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          return result.data;
+        }
+      }
+    } catch (e) {
+      console.warn('API getById error, checking localStorage:', e);
+    }
+
+    const existingStr = localStorage.getItem('nortis_assessment_submissions') || localStorage.getItem('nortis_submissions');
+    if (existingStr) {
+      const existing: AssessmentSubmission[] = JSON.parse(existingStr);
+      return existing.find(s => s.id === id) || null;
+    }
+    return null;
   },
 
   // 2. Fetch all submissions for Admin Dashboard from MySQL
@@ -71,7 +101,7 @@ export const apiService = {
     } catch (e) {
       console.warn('API unavailable, reading from localStorage:', e);
     }
-    const existingStr = localStorage.getItem('nortis_assessment_submissions');
+    const existingStr = localStorage.getItem('nortis_assessment_submissions') || localStorage.getItem('nortis_submissions');
     return existingStr ? JSON.parse(existingStr) : [];
   },
 
@@ -86,11 +116,12 @@ export const apiService = {
     } catch (e) {
       console.warn('API delete error, deleting locally:', e);
     }
-    const existingStr = localStorage.getItem('nortis_assessment_submissions');
+    const existingStr = localStorage.getItem('nortis_assessment_submissions') || localStorage.getItem('nortis_submissions');
     if (existingStr) {
       const existing: AssessmentSubmission[] = JSON.parse(existingStr);
       const filtered = existing.filter(s => s.id !== id);
       localStorage.setItem('nortis_assessment_submissions', JSON.stringify(filtered));
+      localStorage.setItem('nortis_submissions', JSON.stringify(filtered));
     }
     return true;
   },
@@ -109,7 +140,6 @@ export const apiService = {
       const data = await response.json();
       return data;
     } catch (e) {
-      // Local fallback auth check
       if (email === 'admin@nortis.ai' && password === 'password') {
         return { success: true, token: 'local-token-admin' };
       }
@@ -151,3 +181,4 @@ export const apiService = {
     }
   }
 };
+

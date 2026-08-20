@@ -94,7 +94,7 @@ export function AssessmentForm({ onBack, onSubmit, initialData }: AssessmentForm
                 label={t('form.companySize')}
                 required 
                 placeholder={t('form.companySizePlaceholder')}
-                options={Object.entries(translations[language].form.companySizes || {}).map(([k, v]) => ({ label: v as string, value: k }))}
+                options={Object.entries(translations[language].form.companySizes || {}).map(([k, v]) => ({ label: v as string, value: v as string }))}
               value={formData.companySize} onChange={handleChange}
                 />
               <FormInput 
@@ -172,7 +172,7 @@ export function AssessmentForm({ onBack, onSubmit, initialData }: AssessmentForm
                   id="timeline" 
                   label={t('form.timeline')}
                   placeholder={t('form.timelinePlaceholder')}
-                  options={Object.entries(translations[language].form.timelines || {}).map(([k, v]) => ({ label: v as string, value: k }))}
+                  options={Object.entries(translations[language].form.timelines || {}).map(([k, v]) => ({ label: v as string, value: v as string }))}
                   value={formData.timeline} onChange={handleChange}
                 className="md:col-span-1"
                 />

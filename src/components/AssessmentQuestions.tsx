@@ -8,7 +8,7 @@ import { apiService } from '../services/api';
 interface AssessmentQuestionsProps {
   formData: FormData;
   onBack: () => void;
-  onComplete: (id: string) => void;
+  onComplete: (id: string, submission?: AssessmentSubmission) => void;
 }
 
 export function AssessmentQuestions({ onBack, onComplete, formData }: AssessmentQuestionsProps) {
@@ -100,9 +100,9 @@ export function AssessmentQuestions({ onBack, onComplete, formData }: Assessment
       };
 
       apiService.saveSubmission(submission).then((savedId) => {
-        onComplete(savedId || submission.id);
+        onComplete(savedId || submission.id, submission);
       }).catch(() => {
-        onComplete(submission.id);
+        onComplete(submission.id, submission);
       });
     }
   };

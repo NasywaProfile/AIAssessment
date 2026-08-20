@@ -44,20 +44,40 @@ export function AdminDashboard({ onLogout, onOpenCMS }: AdminDashboardProps) {
 
     return matchesSearch && matchesLevel && matchesIndustry;
   });
-
+  const getCompanySizeLabel = (value: string) => {
+    if (!value) return "-";
+    const map: Record<string, string> = {
+      "s50": "1-50 karyawan",
+      "s200": "51-200 karyawan",
+      "s500": "201-500 karyawan",
+      "s1000": "501-1000 karyawan",
+      "splus": "1000+ karyawan"
+    };
+    if (map[value]) return map[value];
+    const translated = t(`form.companySizes.${value}`);
+    if (translated && translated !== `form.companySizes.${value}`) {
+      return translated;
+    }
+    return value;
+  };
 
   const getTimelineLabel = (value: string) => {
+    if (!value) return "-";
     const map: Record<string, string> = {
-      '0-3m': 'm3',
-      '3-6m': 'm6',
-      '6-12m': 'm12',
-      '12m+': 'mplus',
-      'none': 'none'
+      "m3": "0-3 Bulan",
+      "0-3m": "0-3 Bulan",
+      "m6": "3-6 Bulan",
+      "3-6m": "3-6 Bulan",
+      "m12": "6-12 Bulan",
+      "6-12m": "6-12 Bulan",
+      "mplus": "12+ Bulan",
+      "12m+": "12+ Bulan",
+      "none": "Belum ada timeline"
     };
-    const key = map[value];
-    if (key) {
-      const translated = t(`form.timelines.${key}`);
-      return translated !== `form.timelines.${key}` ? translated : value;
+    if (map[value]) return map[value];
+    const translated = t(`form.timelines.${value}`);
+    if (translated && translated !== `form.timelines.${value}`) {
+      return translated;
     }
     return value;
   };
@@ -68,7 +88,7 @@ export function AdminDashboard({ onLogout, onOpenCMS }: AdminDashboardProps) {
       Timestamp: s.timestamp,
       'Company Name': s.companyName,
       Industry: (t(`form.industries.${s.industry}`) && t(`form.industries.${s.industry}`) !== `form.industries.${s.industry}`) ? t(`form.industries.${s.industry}`) : s.industry,
-      'Company Size': s.companySize,
+      'Company Size': getCompanySizeLabel(s.companySize),
       Location: s.location,
       'AI Objective': s.aiGoal,
       'AI Use Cases': s.aiUseCase,
@@ -406,3 +426,6 @@ export function AdminDashboard({ onLogout, onOpenCMS }: AdminDashboardProps) {
     </div>
   );
 }
+
+
+
