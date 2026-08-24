@@ -358,11 +358,6 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
                 {/* Pillar Info */}
                 <div className="space-y-4 border-b border-slate-100 pb-6">
                   <h4 className="font-semibold text-sm text-slate-700">Pillar Details</h4>
-                  
-                  <div className="flex flex-col md:flex-row gap-5">
-                    {renderInputField('ID', 'assessmentData', [pIndex.toString(), 'shortTitle'], pillar.shortTitle || pillar.title, 'Short Title (For Progress)')}
-                    {renderInputField('EN', 'assessmentData', [pIndex.toString(), 'shortTitle'], enPillars[pIndex]?.shortTitle || enPillars[pIndex]?.title || '', 'Short Title (For Progress)')}
-                  </div>
 
                   <div className="flex flex-col md:flex-row gap-5">
                     {renderInputField('ID', 'assessmentData', [pIndex.toString(), 'title'], pillar.title, 'Full Title')}
@@ -451,43 +446,7 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
           if (sectionId === 'form' && key === 'timelines') {
             titleOverride = 'Pilihan Estimasi Waktu';
           }
-          const element = renderFieldGroup(sectionId, [key], idData[key], enData?.[key], titleOverride);
-
-          if (sectionId === 'questions' && key === 'pillarIndicators') {
-            const idPillars = draftTranslations['ID'].assessmentData || [];
-            const enPillars = draftTranslations['EN'].assessmentData || [];
-            
-            return (
-              <React.Fragment key={key}>
-                {element}
-                <div className="mb-6 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
-                  <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
-                    <h3 className="font-semibold text-slate-800 text-sm">Judul & Deskripsi Pilar (Assessment Headers)</h3>
-                    <p className="text-xs text-slate-500 mt-0.5">Pengaturan judul pilar (contoh: Strategi & Kepemimpinan) dan deskripsinya yang muncul tepat di bawah indikator pilar.</p>
-                  </div>
-                  <div className="p-5 space-y-6">
-                    {idPillars.map((p: any, pIdx: number) => (
-                      <div key={pIdx} className="p-5 bg-slate-50/50 rounded-xl border border-slate-100 space-y-4">
-                        <div className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
-                          Pilar {pIdx + 1}: {p.title || `Pillar ${pIdx + 1}`}
-                        </div>
-                        <div className="flex flex-col md:flex-row gap-5">
-                          {renderInputField('ID', 'assessmentData', [pIdx.toString(), 'title'], p.title || '', 'Judul Pilar')}
-                          {renderInputField('EN', 'assessmentData', [pIdx.toString(), 'title'], enPillars[pIdx]?.title || '', 'Judul Pilar')}
-                        </div>
-                        <div className="flex flex-col md:flex-row gap-5">
-                          {renderInputField('ID', 'assessmentData', [pIdx.toString(), 'description'], p.description || '', 'Deskripsi Pilar')}
-                          {renderInputField('EN', 'assessmentData', [pIdx.toString(), 'description'], enPillars[pIdx]?.description || '', 'Deskripsi Pilar')}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </React.Fragment>
-            );
-          }
-
-          return element;
+          return renderFieldGroup(sectionId, [key], idData[key], enData?.[key], titleOverride);
         })}
       </div>
     );
