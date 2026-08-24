@@ -310,6 +310,14 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
       if (sectionId === 'form') {
         delete filteredIdData['dropdownPlaceholder'];
       }
+      if (sectionId === 'admin') {
+        delete filteredIdData['loginHeader'];
+        delete filteredIdData['password'];
+        delete filteredIdData['passwordPlaceholder'];
+        delete filteredIdData['wrongPassword'];
+        delete filteredIdData['loginBtn'];
+        delete filteredIdData['backHome'];
+      }
 
       idData = filteredIdData;
     }
