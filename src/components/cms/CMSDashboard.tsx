@@ -311,6 +311,8 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
         delete filteredIdData['dropdownPlaceholder'];
       }
       if (sectionId === 'admin') {
+        delete filteredIdData['loginTitle'];
+        delete filteredIdData['loginSubtitle'];
         delete filteredIdData['loginHeader'];
         delete filteredIdData['password'];
         delete filteredIdData['passwordPlaceholder'];
