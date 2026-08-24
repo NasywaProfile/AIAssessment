@@ -453,54 +453,6 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
 
     return (
       <div className="space-y-4">
-        {sectionId === 'admin' && (
-          <div className="mb-6 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
-            <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
-              <h3 className="font-semibold text-slate-800 text-sm">Readiness Level</h3>
-            </div>
-            <div className="p-5 space-y-6">
-              {/* Readiness Level Main Label */}
-              <div className="flex flex-col md:flex-row gap-5">
-                {renderInputField('ID', 'admin', ['readinessLevel'], rawIdData.readinessLevel || '', 'ID')}
-                {renderInputField('EN', 'admin', ['readinessLevel'], rawEnData.readinessLevel || '', 'EN')}
-              </div>
-
-              {/* Sub Kolom: All Levels */}
-              <div className="p-5 bg-slate-50/50 rounded-xl border border-slate-200/80 space-y-5">
-                <div className="border-b border-slate-200/60 pb-3">
-                  <h4 className="font-semibold text-xs text-slate-600 uppercase tracking-wider">Sub Kolom: All Levels</h4>
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-5">
-                  {renderInputField('ID', 'admin', ['allLevels'], rawIdData.allLevels || '', 'ID')}
-                  {renderInputField('EN', 'admin', ['allLevels'], rawEnData.allLevels || '', 'EN')}
-                </div>
-
-                {/* Sub Kolom: Level 1 - 5 */}
-                <div className="p-4 bg-white rounded-xl border border-slate-200/60 space-y-4">
-                  <h5 className="font-semibold text-[11px] text-slate-500 uppercase tracking-wider mb-2">Sub Kolom: Level 1 - 5</h5>
-                  
-                  {[
-                    { key: 'level1', label: 'Level 1' },
-                    { key: 'level2', label: 'Level 2' },
-                    { key: 'level3', label: 'Level 3' },
-                    { key: 'level4', label: 'Level 4' },
-                    { key: 'level5', label: 'Level 5' },
-                  ].map(({ key: lvlKey, label: lvlLabel }) => (
-                    <div key={lvlKey} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                      <div className="text-xs font-bold text-slate-600 mb-2">{lvlLabel}</div>
-                      <div className="flex flex-col md:flex-row gap-4">
-                        {renderInputField('ID', 'admin', [lvlKey], rawIdData[lvlKey] || '', 'ID')}
-                        {renderInputField('EN', 'admin', [lvlKey], rawEnData[lvlKey] || '', 'EN')}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {Object.keys(idData).map(key => {
           let titleOverride = undefined;
           if (sectionId === 'admin' && key === 'industryLabel') {
@@ -515,7 +467,63 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
           if (sectionId === 'form' && key === 'timelines') {
             titleOverride = 'Pilihan Estimasi Waktu';
           }
-          return renderFieldGroup(sectionId, [key], idData[key], enData?.[key], titleOverride);
+          
+          const fieldGroup = renderFieldGroup(sectionId, [key], idData[key], enData?.[key], titleOverride);
+
+          if (sectionId === 'admin' && key === 'exportExcel') {
+            return (
+              <React.Fragment key={key}>
+                {fieldGroup}
+                <div className="my-6 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
+                  <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
+                    <h3 className="font-semibold text-slate-800 text-sm">Readiness Level</h3>
+                  </div>
+                  <div className="p-5 space-y-6">
+                    {/* Readiness Level Main Label */}
+                    <div className="flex flex-col md:flex-row gap-5">
+                      {renderInputField('ID', 'admin', ['readinessLevel'], rawIdData.readinessLevel || '', 'ID')}
+                      {renderInputField('EN', 'admin', ['readinessLevel'], rawEnData.readinessLevel || '', 'EN')}
+                    </div>
+
+                    {/* Sub Kolom: All Levels */}
+                    <div className="p-5 bg-slate-50/50 rounded-xl border border-slate-200/80 space-y-5">
+                      <div className="border-b border-slate-200/60 pb-3">
+                        <h4 className="font-semibold text-xs text-slate-600 uppercase tracking-wider">Sub Kolom: All Levels</h4>
+                      </div>
+                      
+                      <div className="flex flex-col md:flex-row gap-5">
+                        {renderInputField('ID', 'admin', ['allLevels'], rawIdData.allLevels || '', 'ID')}
+                        {renderInputField('EN', 'admin', ['allLevels'], rawEnData.allLevels || '', 'EN')}
+                      </div>
+
+                      {/* Sub Kolom: Level 1 - 5 */}
+                      <div className="p-4 bg-white rounded-xl border border-slate-200/60 space-y-4">
+                        <h5 className="font-semibold text-[11px] text-slate-500 uppercase tracking-wider mb-2">Sub Kolom: Level 1 - 5</h5>
+                        
+                        {[
+                          { key: 'level1', label: 'Level 1' },
+                          { key: 'level2', label: 'Level 2' },
+                          { key: 'level3', label: 'Level 3' },
+                          { key: 'level4', label: 'Level 4' },
+                          { key: 'level5', label: 'Level 5' },
+                        ].map(({ key: lvlKey, label: lvlLabel }) => (
+                          <div key={lvlKey} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <div className="text-xs font-bold text-slate-600 mb-2">{lvlLabel}</div>
+                            <div className="flex flex-col md:flex-row gap-4">
+                              {renderInputField('ID', 'admin', [lvlKey], rawIdData[lvlKey] || '', 'ID')}
+                              {renderInputField('EN', 'admin', [lvlKey], rawEnData[lvlKey] || '', 'EN')}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          }
+
+          return fieldGroup;
         })}
       </div>
     );
