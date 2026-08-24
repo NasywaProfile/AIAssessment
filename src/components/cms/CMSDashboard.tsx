@@ -307,6 +307,9 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
       if (sectionId === 'questions') {
         delete filteredIdData['pillarIndicator']; // hide legacy field
       }
+      if (sectionId === 'form') {
+        delete filteredIdData['dropdownPlaceholder'];
+      }
 
       idData = filteredIdData;
     }
