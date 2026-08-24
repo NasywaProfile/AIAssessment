@@ -269,30 +269,12 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
     if (typeof valID === 'object' && valID !== null) {
       return (
         <div key={path.join('.')} className="mb-6 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
-          <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
             <h3 className="font-semibold text-slate-800 text-sm">{title}</h3>
-            <div className="flex gap-2 items-center">
-              <span className="text-[11px] font-medium text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">Options</span>
-              <button 
-                onClick={() => handleAddOption(section, path)}
-                className="text-xs px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors font-semibold"
-              >
-                + Tambah Opsi
-              </button>
-            </div>
           </div>
           <div className="p-5 grid grid-cols-1 gap-4">
             {Object.keys(valID).map(key => (
-               <div key={key} className="flex flex-col md:flex-row gap-5 p-5 bg-white rounded-xl border border-slate-100 shadow-sm relative group">
-                 <div className="flex-none w-32 pt-1 flex flex-col gap-2">
-                   <span className="text-[11px] font-mono bg-slate-100 text-slate-600 px-2 py-1.5 rounded-md break-all">{key}</span>
-                   <button 
-                     onClick={() => handleRemoveOption(section, path, key)}
-                     className="text-[10px] text-red-500 hover:text-red-600 font-bold self-start mt-2"
-                   >
-                     Hapus
-                   </button>
-                 </div>
+               <div key={key} className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm">
                  <div className="flex-1 flex flex-col md:flex-row gap-5">
                    {renderInputField('ID', section, [...path, key], valID[key], 'ID')}
                    {renderInputField('EN', section, [...path, key], valEN?.[key] || '', 'EN')}
