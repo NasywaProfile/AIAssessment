@@ -327,6 +327,9 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
         delete filteredIdData['level3'];
         delete filteredIdData['level4'];
         delete filteredIdData['level5'];
+
+        delete filteredIdData['industryLabel'];
+        delete filteredIdData['allIndustries'];
       }
 
       idData = filteredIdData;
@@ -450,13 +453,15 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
 
     const rawIdData = draftTranslations['ID'][sectionId] || {};
     const rawEnData = draftTranslations['EN'][sectionId] || {};
+    const rawIdFormIndustries = draftTranslations['ID']?.form?.industries || {};
+    const rawEnFormIndustries = draftTranslations['EN']?.form?.industries || {};
 
     return (
       <div className="space-y-4">
         {Object.keys(idData).map(key => {
           let titleOverride = undefined;
           if (sectionId === 'admin' && key === 'industryLabel') {
-            titleOverride = 'Label Industri (Admin)';
+            titleOverride = 'Label Industri';
           }
           if (sectionId === 'form' && key === 'industries') {
             titleOverride = 'Pilihan Industri (Sektor)';
@@ -474,6 +479,8 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
             return (
               <React.Fragment key={key}>
                 {fieldGroup}
+                
+                {/* Readiness Level Group Card */}
                 <div className="my-6 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
                   <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
                     <h3 className="font-semibold text-slate-800 text-sm">Readiness Level</h3>
@@ -519,6 +526,47 @@ export function CMSDashboard({ onBack }: { onBack: () => void }) {
                     </div>
                   </div>
                 </div>
+
+                {/* Label Industri Group Card */}
+                <div className="my-6 bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
+                  <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
+                    <h3 className="font-semibold text-slate-800 text-sm">Label Industri</h3>
+                  </div>
+                  <div className="p-5 space-y-6">
+                    {/* Label Industri Main Field */}
+                    <div className="flex flex-col md:flex-row gap-5">
+                      {renderInputField('ID', 'admin', ['industryLabel'], rawIdData.industryLabel || '', 'ID')}
+                      {renderInputField('EN', 'admin', ['industryLabel'], rawEnData.industryLabel || '', 'EN')}
+                    </div>
+
+                    {/* Sub Kolom: All Industries */}
+                    <div className="p-5 bg-slate-50/50 rounded-xl border border-slate-200/80 space-y-5">
+                      <div className="border-b border-slate-200/60 pb-3">
+                        <h4 className="font-semibold text-xs text-slate-600 uppercase tracking-wider">Sub Kolom: All Industries</h4>
+                      </div>
+                      
+                      <div className="flex flex-col md:flex-row gap-5">
+                        {renderInputField('ID', 'admin', ['allIndustries'], rawIdData.allIndustries || '', 'ID')}
+                        {renderInputField('EN', 'admin', ['allIndustries'], rawEnData.allIndustries || '', 'EN')}
+                      </div>
+
+                      {/* Sub Kolom: Daftar Pilihan Industri */}
+                      <div className="p-4 bg-white rounded-xl border border-slate-200/60 space-y-4">
+                        <h5 className="font-semibold text-[11px] text-slate-500 uppercase tracking-wider mb-2">Sub Kolom: Daftar Pilihan Industri</h5>
+                        
+                        {Object.keys(rawIdFormIndustries).map(indKey => (
+                          <div key={indKey} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <div className="flex flex-col md:flex-row gap-4">
+                              {renderInputField('ID', 'form', ['industries', indKey], rawIdFormIndustries[indKey] || '', 'ID')}
+                              {renderInputField('EN', 'form', ['industries', indKey], rawEnFormIndustries[indKey] || '', 'EN')}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </React.Fragment>
             );
           }
